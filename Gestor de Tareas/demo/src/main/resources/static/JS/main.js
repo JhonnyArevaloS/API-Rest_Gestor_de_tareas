@@ -6,14 +6,18 @@ let resultado='';
 
 //Creamos la funcion que traera las tareas y creara la tabla
 const mostrarTareas = (data) =>{
+    let resultado = '';
+
     data.forEach(tarea => {
+
+        const claseFinalizada = tarea.finalizada ? 'finalizada' : 'No-finalizada';
+
         resultado += `<tr>
-                    <td>${tarea.id}</td>
-                    <td>${tarea.titulo}</td>
-                    <td>${tarea.actividad}</td>
+                    <td class="${claseFinalizada}">${tarea.id}</td>
+                    <td class="${claseFinalizada}">${tarea.titulo}</td>
+                    <td class="${claseFinalizada}">${tarea.actividad}</td>
                     <td class="columnaCheck">
-                        <div class="form-check form-switch" style="display: grid;
-    justify-items: center;">
+                        <div class="form-check form-switch" style="display: grid; justify-items: center;">
                             <input class="tareaInterruptor form-check-input" type="checkbox" ${tarea.finalizada ? 'checked' : ''}>
                         </div>
                     </td>
@@ -44,13 +48,17 @@ const on = (element, Event, selector, handler)=>{
     })
 }
 
-//Interruptor actualizar estado
 
+
+//Interruptor actualizar estado al momento de presionarlo
 on(document, 'click', '.tareaInterruptor', e=> {
     const fila = e.target.parentNode.parentNode.parentNode;
-    const id = fila.children[0].innerHTML;
+    let id = fila.children[0].innerHTML;
+    const titulo= fila.children[1];
+    const actividad= fila.children[2];
     const checkbox = e.target;
     const estadoTarea= checkbox.checked;
+    
     fetch(`${url}/Tarea/${id}/Estado`,
         {
             method: 'PUT',
@@ -60,7 +68,27 @@ on(document, 'click', '.tareaInterruptor', e=> {
         .then(response=> response)
         .then(()=>console.log("Todo salio muy bien :)"))
         .catch(error=> console.error('Error:', error))
-    
+
+    id = fila.children[0];
+
+        if (estadoTarea) {
+            id.style.textDecoration = 'line-through';
+            titulo.style.textDecoration = 'line-through';
+            actividad.style.textDecoration = 'line-through';
+            id.style.fontStyle = 'italic';
+            titulo.style.fontStyle = 'italic';
+            actividad.style.fontStyle = 'italic';
+
+        } else{
+            id.style.textDecoration = 'none';
+            titulo.style.textDecoration = 'none';
+            actividad.style.textDecoration = 'none';
+            id.style.fontStyle = 'normal';
+            titulo.style.fontStyle = 'normal';
+            actividad.style.fontStyle = 'normal';
+
+        }
+        
 })
 
   
